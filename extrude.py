@@ -154,19 +154,19 @@ def koch_circle_oscillations(i):
 def koch_growth(i):
 	samples = 3
 	iterations = 4
-	height = 4
-	radius = sin(pi*i)**2 + 0.1*2*(0.5-i) if i < 0.5 else sin(pi*i)
+	height = 3
+	radius = sin(pi*i)**2 + 0.4*2*(0.5-i)**2 if i < 0.5 else sin(pi*i) + 0.3*2*(0.5-i)**2
 	lerp_function = i
 	spin = i* pi/3
 
 	c = circle(radius, samples * 4**iterations, spin)
-	koch = kochify(circle(radius, samples, spin), i*iterations, iterations)
+	koch = kochify(circle(radius, samples, spin), sin(pi*i)*iterations, iterations)
 	l = lerp_shapes(c, koch, lerp_function)
 	return translate(l, [0,0,i*height])
 
 def make_stl():
 	with open("test.stl", 'w') as stl:
-		surface = extrude(koch_growth, samples = 50)
+		surface = extrude(koch_growth, samples = 30)
 		stl.write(triangles_to_binary_stl(surface))
 if __name__ == '__main__':
 	#import cProfile
