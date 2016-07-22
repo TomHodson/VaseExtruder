@@ -164,9 +164,60 @@ def koch_growth(i):
 	l = lerp_shapes(c, koch, lerp_function)
 	return translate(l, [0,0,i*height])
 
+def koch_plant_pot(i):
+	samples = 8
+	iterations = 2
+	height = 100.0
+	g=0.575; b=0.6; c=0.46; d=0.41
+	radius = 75.0 * (g*sin(b*pi*i + c)**2 + d) / 2 / (g*sin(b*pi*1.0 + c)**2 + d)
+
+	n = 4.0
+	lerp_function = 0.6 * i**n * (1 - i)**n / 0.5**(2*n)
+	spin = i* pi/2
+
+	c = circle(radius, samples * 4**iterations, spin)
+	koch = kochify(circle(radius, samples, spin), iterations)
+	l = lerp_shapes(c, koch, lerp_function)
+	return translate(l, [0,0,i*height])
+
+def nice_swirl(i):
+	#this one is really nice, it has small ribs going up the side
+	samples = 50
+	iterations = 2
+	height = 100.0
+	g=0.575; b=0.6; c=0.46; d=0.41
+	radius = 74.0 * (g*sin(b*pi*i + c)**2 + d) / 2 / (g*sin(b*pi*1.0 + c)**2 + d)
+	spin = i* pi/2
+
+	n = 4.0
+	lerp_function = 0.6 * i**n * (1 - i)**n / 0.5**(2*n)
+
+	c = circle(radius, samples * 4**iterations, spin)
+	koch = kochify(circle(radius, samples, spin), iterations*lerp_function, max_iterations = iterations)
+	return translate(koch, [0,0,i*height])
+
+def smooth_bulb(i):
+	from math import sqrt
+	samples = 100
+	def top_radius(i):
+			b=0.56; d=0.71
+			c = pi/2.0*(1-b)
+			return 0.5 * (sin(b*pi*i + c)**2 + d) / (sin(b*pi*0.5 + c)**2 + d)
+	
+	def bottom_radius(i):
+		j = 0.36
+		return sqrt(0.5**2 - (i - 0.5)**2/(1+j))
+	
+	radius = 74.0 / 2.0 * (top_radius(i) if i > 0.5 else bottom_radius(i)) / top_radius(1.0)
+	spin = i* pi/2
+	height = 74.0 / 2.0 * 1.0 / top_radius(1.0)
+
+	c = circle(radius, samples, spin)
+	return translate(c, [0,0,i*height])
+
 def make_stl():
-	with open("test.stl", 'w') as stl:
-		surface = extrude(koch_growth, samples = 30)
+	with open("smooth_bulb.stl", 'w') as stl:
+		surface = extrude(bulb, samples = 50)
 		stl.write(triangles_to_binary_stl(surface))
 if __name__ == '__main__':
 	#import cProfile

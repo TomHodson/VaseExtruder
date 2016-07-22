@@ -1,0 +1,1 @@
+openscad -o view.png view.scad

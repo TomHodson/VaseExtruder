@@ -1,0 +1,1 @@
+import("woven_3_48.3mm_opening.stl");
